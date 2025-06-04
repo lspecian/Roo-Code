@@ -664,7 +664,7 @@ const SettingsView = forwardRef<SettingsViewRef, SettingsViewProps>(({ onDone, t
 							apiConfiguration={apiConfiguration}
 							setApiConfigurationField={setApiConfigurationField}
 							areSettingsCommitted={!isChangeDetected}
-							terminalMemoryEnabled={terminalMemoryEnabled}
+							terminalMemoryEnabled={terminalMemoryEnabled ?? true}
 						/>
 					)}
 
