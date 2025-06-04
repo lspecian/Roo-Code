@@ -35,9 +35,10 @@ interface CodeIndexSettingsProps {
 	codebaseIndexModels: CodebaseIndexModels | undefined
 	codebaseIndexConfig: CodebaseIndexConfig | undefined
 	apiConfiguration: ProviderSettings
-	setCachedStateField: SetCachedStateField<"codebaseIndexConfig">
+	setCachedStateField: SetCachedStateField<"codebaseIndexConfig" | "terminalMemoryEnabled">
 	setApiConfigurationField: <K extends keyof ProviderSettings>(field: K, value: ProviderSettings[K]) => void
 	areSettingsCommitted: boolean
+	terminalMemoryEnabled: boolean
 }
 
 interface IndexingStatusUpdateMessage {
@@ -58,6 +59,7 @@ export const CodeIndexSettings: React.FC<CodeIndexSettingsProps> = ({
 	setCachedStateField,
 	setApiConfigurationField,
 	areSettingsCommitted,
+	terminalMemoryEnabled,
 }) => {
 	const { t } = useAppTranslation()
 	const [indexingStatus, setIndexingStatus] = useState({
@@ -190,6 +192,28 @@ export const CodeIndexSettings: React.FC<CodeIndexSettingsProps> = ({
 						<VSCodeLink
 							href={buildDocLink("features/experimental/codebase-indexing", "settings")}
 							style={{ display: "inline" }}></VSCodeLink>
+					</Trans>
+				</p>
+			</div>
+
+			{/* Terminal Memory Section */}
+			<div className="mt-4">
+				<div className="flex items-center gap-2">
+					<VSCodeCheckbox
+						checked={terminalMemoryEnabled}
+						onChange={(e: any) => {
+							setCachedStateField("terminalMemoryEnabled", e.target.checked)
+						}}
+						disabled={!codebaseIndexConfig?.codebaseIndexEnabled}
+						data-testid="terminal-memory-enabled-checkbox">
+						<span className="font-medium">{t("settings:experimental.terminalMemoryEnabled.name")}</span>
+					</VSCodeCheckbox>
+				</div>
+				<p className="text-vscode-descriptionForeground text-sm mt-0">
+					<Trans i18nKey="settings:experimental.terminalMemoryEnabled.description">
+						When enabled, terminal commands and their outputs are indexed using AI embeddings for semantic
+						search and context awareness. This allows Roo Code to remember and reference previous terminal
+						sessions. Requires codebase indexing to be enabled.
 					</Trans>
 				</p>
 			</div>

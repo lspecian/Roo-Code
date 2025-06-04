@@ -16,6 +16,7 @@ import { TerminalRegistry } from "../../integrations/terminal/TerminalRegistry"
 import { Terminal } from "../../integrations/terminal/Terminal"
 import { arePathsEqual } from "../../utils/path"
 import { formatResponse } from "../prompts/responses"
+import { TerminalMemoryService } from "../../services/terminal-memory/TerminalMemoryService"
 
 import { Task } from "../task/Task"
 
@@ -168,6 +169,18 @@ export async function getEnvironmentDetails(cline: Task, includeFileDetails: boo
 
 	if (terminalDetails) {
 		details += terminalDetails
+	}
+
+	// Add enhanced terminal memory context
+	try {
+		const terminalMemoryService = TerminalMemoryService.getInstance()
+		const enhancedTerminalContext = terminalMemoryService.getEnhancedEnvironmentDetails()
+		if (enhancedTerminalContext) {
+			details += `\n\n${enhancedTerminalContext}`
+		}
+	} catch (error) {
+		// Terminal memory service might not be initialized yet, which is fine
+		console.debug("[getEnvironmentDetails] Terminal memory service not available:", error)
 	}
 
 	// Add current time information with timezone.

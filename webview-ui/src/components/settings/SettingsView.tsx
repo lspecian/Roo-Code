@@ -165,6 +165,7 @@ const SettingsView = forwardRef<SettingsViewRef, SettingsViewProps>(({ onDone, t
 		remoteBrowserEnabled,
 		maxReadFileLine,
 		terminalCompressProgressBar,
+		terminalMemoryEnabled,
 		maxConcurrentFileReads,
 		condensingApiConfigId,
 		customCondensingPrompt,
@@ -663,6 +664,7 @@ const SettingsView = forwardRef<SettingsViewRef, SettingsViewProps>(({ onDone, t
 							apiConfiguration={apiConfiguration}
 							setApiConfigurationField={setApiConfigurationField}
 							areSettingsCommitted={!isChangeDetected}
+							terminalMemoryEnabled={terminalMemoryEnabled ?? true}
 						/>
 					)}
 

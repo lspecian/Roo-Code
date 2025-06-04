@@ -8,6 +8,7 @@ import { ICodeParser, IEmbedder, IFileWatcher, IVectorStore } from "./interfaces
 import { CodeIndexConfigManager } from "./config-manager"
 import { CacheManager } from "./cache-manager"
 import { Ignore } from "ignore"
+import { TerminalMemoryService } from "../terminal-memory/TerminalMemoryService"
 
 /**
  * Factory class responsible for creating and configuring code indexing service dependencies.
@@ -125,6 +126,15 @@ export class CodeIndexServiceFactory {
 		const parser = codeParser
 		const scanner = this.createDirectoryScanner(embedder, vectorStore, parser, ignoreInstance)
 		const fileWatcher = this.createFileWatcher(context, embedder, vectorStore, cacheManager, ignoreInstance)
+
+		// Initialize terminal memory service with the same vector store and embedder
+		try {
+			const terminalMemoryService = TerminalMemoryService.getInstance()
+			terminalMemoryService.initialize(vectorStore, embedder, this.workspacePath)
+			console.log("[CodeIndexServiceFactory] Terminal memory service initialized")
+		} catch (error) {
+			console.error("[CodeIndexServiceFactory] Failed to initialize terminal memory service:", error)
+		}
 
 		return {
 			embedder,
