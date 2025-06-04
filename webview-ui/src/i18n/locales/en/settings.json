@@ -414,6 +414,10 @@
 			"label": "Compress progress bar output",
 			"description": "When enabled, processes terminal output with carriage returns (\\r) to simulate how a real terminal would display content. This removes intermediate progress bar states, retaining only the final state, which conserves context space for more relevant information. <0>Learn more</0>"
 		},
+		"memoryEnabled": {
+			"label": "Enable terminal memory indexing",
+			"description": "When enabled, terminal commands and their outputs are indexed using AI embeddings for semantic search and context awareness. This allows Roo Code to remember and reference previous terminal sessions. Requires codebase indexing to be enabled. <0>Learn more</0>"
+		},
 		"powershellCounter": {
 			"label": "Enable PowerShell counter workaround",
 			"description": "When enabled, adds a counter to PowerShell commands to ensure proper command execution. This helps with PowerShell terminals that might have issues with command output capture. <0>Learn more</0>"
@@ -486,6 +490,10 @@
 		"MULTI_SEARCH_AND_REPLACE": {
 			"name": "Use experimental multi block diff tool",
 			"description": "When enabled, Roo will use multi block diff tool. This will try to update multiple code blocks in the file in one request."
+		},
+		"terminalMemoryEnabled": {
+			"name": "Enable terminal memory indexing",
+			"description": "When enabled, terminal commands and their outputs are indexed using AI embeddings for semantic search and context awareness. This allows Roo Code to remember and reference previous terminal sessions. Requires codebase indexing to be enabled."
 		}
 	},
 	"promptCaching": {

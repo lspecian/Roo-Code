@@ -1,0 +1,5 @@
+export { TerminalMemoryService } from "./TerminalMemoryService"
+export { TerminalOutputIndexer } from "./TerminalOutputIndexer"
+export { DirectoryContextManager } from "./DirectoryContextManager"
+export type { TerminalOutputRecord, TerminalOutputChunk } from "./TerminalOutputIndexer"
+export type { DirectoryContext, CommandHistory, DirectoryType } from "./DirectoryContextManager"

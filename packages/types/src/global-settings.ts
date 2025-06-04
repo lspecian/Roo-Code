@@ -48,7 +48,7 @@ export const globalSettingsSchema = z.object({
 	allowedMaxRequests: z.number().nullish(),
 	autoCondenseContext: z.boolean().optional(),
 	autoCondenseContextPercent: z.number().optional(),
- 	maxConcurrentFileReads: z.number().optional(),
+	maxConcurrentFileReads: z.number().optional(),
 
 	browserToolEnabled: z.boolean().optional(),
 	browserViewportSize: z.string().optional(),
@@ -79,6 +79,7 @@ export const globalSettingsSchema = z.object({
 	terminalZshP10k: z.boolean().optional(),
 	terminalZdotdir: z.boolean().optional(),
 	terminalCompressProgressBar: z.boolean().optional(),
+	terminalMemoryEnabled: z.boolean().optional().default(true),
 
 	rateLimitSeconds: z.number().optional(),
 	diffEnabled: z.boolean().optional(),
@@ -165,6 +166,7 @@ export const GLOBAL_SETTINGS_KEYS = keysOf<GlobalSettings>()([
 	"terminalZshP10k",
 	"terminalZdotdir",
 	"terminalCompressProgressBar",
+	"terminalMemoryEnabled",
 
 	"rateLimitSeconds",
 	"diffEnabled",

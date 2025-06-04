@@ -27,6 +27,7 @@ type ExperimentalSettingsProps = HTMLAttributes<HTMLDivElement> & {
 	apiConfiguration: ProviderSettings
 	setApiConfigurationField: <K extends keyof ProviderSettings>(field: K, value: ProviderSettings[K]) => void
 	areSettingsCommitted: boolean
+	terminalMemoryEnabled: boolean
 }
 
 export const ExperimentalSettings = ({
@@ -39,6 +40,7 @@ export const ExperimentalSettings = ({
 	apiConfiguration,
 	setApiConfigurationField,
 	areSettingsCommitted,
+	terminalMemoryEnabled,
 	className,
 	...props
 }: ExperimentalSettingsProps) => {
@@ -78,7 +80,10 @@ export const ExperimentalSettings = ({
 								experimentKey={config[0]}
 								enabled={experiments[EXPERIMENT_IDS[config[0] as keyof typeof EXPERIMENT_IDS]] ?? false}
 								onChange={(enabled) =>
-									setExperimentEnabled(EXPERIMENT_IDS[config[0] as keyof typeof EXPERIMENT_IDS], enabled)
+									setExperimentEnabled(
+										EXPERIMENT_IDS[config[0] as keyof typeof EXPERIMENT_IDS],
+										enabled,
+									)
 								}
 							/>
 						)
@@ -91,6 +96,7 @@ export const ExperimentalSettings = ({
 					setCachedStateField={setCachedStateField as SetCachedStateField<keyof ExtensionStateContextType>}
 					setApiConfigurationField={setApiConfigurationField}
 					areSettingsCommitted={areSettingsCommitted}
+					terminalMemoryEnabled={terminalMemoryEnabled}
 				/>
 			</Section>
 		</div>

@@ -14,6 +14,7 @@ import { unescapeHtmlEntities } from "../../utils/text-normalization"
 import { ExitCodeDetails, RooTerminalCallbacks, RooTerminalProcess } from "../../integrations/terminal/types"
 import { TerminalRegistry } from "../../integrations/terminal/TerminalRegistry"
 import { Terminal } from "../../integrations/terminal/Terminal"
+import { TerminalMemoryService } from "../../services/terminal-memory/TerminalMemoryService"
 
 class ShellIntegrationError extends Error {}
 
@@ -25,6 +26,7 @@ export async function executeCommandTool(
 	pushToolResult: PushToolResult,
 	removeClosingTag: RemoveClosingTag,
 ) {
+	console.log("🔥 DEBUG: executeCommandTool called - UPDATED CODE IS RUNNING", new Date().toISOString())
 	let command: string | undefined = block.params.command
 	const customCwd: string | undefined = block.params.cwd
 
@@ -184,9 +186,75 @@ export async function executeCommand(
 			clineProvider?.postMessageToWebview({ type: "commandExecutionStatus", text: JSON.stringify(status) })
 		},
 		onShellExecutionComplete: (details: ExitCodeDetails) => {
+			console.log("[executeCommand] *** onShellExecutionComplete TRIGGERED ***", {
+				exitCode: details.exitCode,
+				command: command.substring(0, 100),
+				accumulatedOutputLength: accumulatedOutput.length,
+				timestamp: new Date().toISOString(),
+			})
+
 			const status: CommandExecutionStatus = { executionId, status: "exited", exitCode: details.exitCode }
 			clineProvider?.postMessageToWebview({ type: "commandExecutionStatus", text: JSON.stringify(status) })
 			exitDetails = details
+
+			// Index terminal output in the terminal memory service if enabled
+			try {
+				console.log("[executeCommand] Starting terminal memory processing...")
+				const provider = cline.providerRef.deref()
+				console.log("[executeCommand] Provider deref result:", !!provider)
+
+				const globalSettings = provider?.contextProxy.getValues()
+				console.log("[executeCommand] Global settings:", globalSettings)
+
+				const terminalMemoryEnabled = globalSettings?.terminalMemoryEnabled ?? true
+
+				console.log("[executeCommand] Terminal memory check:", {
+					providerExists: !!provider,
+					globalSettings: globalSettings ? Object.keys(globalSettings) : "null",
+					terminalMemoryEnabled,
+					command: command.substring(0, 50) + "...",
+					settingValue: globalSettings?.terminalMemoryEnabled,
+					defaultValue: true,
+				})
+
+				if (terminalMemoryEnabled) {
+					console.log("[executeCommand] *** TERMINAL MEMORY ENABLED - PROCESSING COMMAND ***")
+					console.log("[executeCommand] Command details:", {
+						command,
+						outputLength: accumulatedOutput.length,
+						exitCode: details.exitCode || 0,
+						workingDir,
+						taskId: cline.taskId,
+						terminalId: terminal.id?.toString(),
+					})
+
+					const terminalMemoryService = TerminalMemoryService.getInstance()
+					console.log("[executeCommand] TerminalMemoryService instance:", !!terminalMemoryService)
+
+					terminalMemoryService
+						.processTerminalExecution(
+							command,
+							accumulatedOutput,
+							details.exitCode || 0,
+							workingDir,
+							cline.taskId,
+							terminal.id?.toString(),
+						)
+						.then(() => {
+							console.log("[executeCommand] *** TERMINAL MEMORY PROCESSING COMPLETED SUCCESSFULLY ***")
+						})
+						.catch((error) => {
+							console.error("[executeCommand] *** TERMINAL MEMORY PROCESSING FAILED ***:", error)
+							console.error("[executeCommand] Error stack:", error.stack)
+						})
+				} else {
+					console.log("[executeCommand] *** TERMINAL MEMORY DISABLED - SKIPPING INDEXING ***")
+					console.log("[executeCommand] Reason: terminalMemoryEnabled =", terminalMemoryEnabled)
+				}
+			} catch (error) {
+				console.error("[executeCommand] *** ERROR IN TERMINAL MEMORY PROCESSING ***:", error)
+				console.error("[executeCommand] Error stack:", error.stack)
+			}
 		},
 	}
 
